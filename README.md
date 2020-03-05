@@ -67,7 +67,7 @@ Using `prefix+w` to call the script in new window of tmux.
 
 ## Customization
 
-Fucking the source code which only almost one hundred lines, and write down your loved script.
+Read the Fucking source code which only almost one hundred lines, and write down your loved script.
 
 You will fall in love with the expandability of `fzf` and `tmux`.
 
