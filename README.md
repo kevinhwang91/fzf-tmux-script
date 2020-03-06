@@ -36,8 +36,8 @@ set -s focus-events on
 # replace ~/.local/bin/fzf_panes.tmux to your path of fzf_panes.tmux
 if-shell '[[ -f ~/.local/bin/fzf_panes.tmux ]]' {
     set-hook -g pane-focus-in[10] \
-    "run -b 'sh ~/.local/bin/fzf_panes.tmux update_mru_pane_ids'"
-    bind w run -b 'sh ~/.local/bin/fzf_panes.tmux new_window'
+    "run -b 'bash ~/.local/bin/fzf_panes.tmux update_mru_pane_ids'"
+    bind w run -b 'bash ~/.local/bin/fzf_panes.tmux new_window'
 } {
     set-hook -ug pane-focus-in[10]
     bind w choose-tree -Z
