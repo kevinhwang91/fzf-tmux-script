@@ -11,7 +11,7 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 ## Requirements
 
 1. [fzf](https://github.com/junegunn/fzf) (at least 0.19.0 version)
-2. [tmux](https://github.com/tmux/tmux)
+2. [tmux](https://github.com/tmux/tmux) (at least 3.0 version)
 
 ## Features
 
@@ -34,7 +34,7 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 set -s focus-events on
 
 # replace ~/.local/bin/fzf_panes.tmux to your path of fzf_panes.tmux
-if-shell '[[ -f ~/.local/bin/fzf_panes.tmux ]]' {
+if-shell '[ -f ~/.local/bin/fzf_panes.tmux ]' {
     set-hook -g pane-focus-in[10] \
     "run -b 'bash ~/.local/bin/fzf_panes.tmux update_mru_pane_ids'"
     bind w run -b 'bash ~/.local/bin/fzf_panes.tmux new_window'
