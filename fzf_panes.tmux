@@ -87,7 +87,7 @@ panes_src() {
     printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
         'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'THCNT' 'TIME' 'TTY' 'CMD'
     panes_info=$(tmux list-panes -aF \
-        '#D #{=|6|…:session_name} #I.#P #{pane_tty} #T' |
+        '#D #{=|6|…:session_name} #I.#P #{pane_tty} #{pane_current_path} #T' |
         sed -E "/^$TMUX_PANE /d")
     ttys=$(awk '{printf("%s,", $4)}' <<<$panes_info | sed 's/,$//')
     ps_info=$(ps -t$ttys -o stat,pid,pcpu,pmem,thcount,time,tname,cmd |
@@ -103,17 +103,22 @@ panes_src() {
                 session=${pane_info[1]}
                 pane=${pane_info[2]}
                 tty=${pane_info[3]#/dev/}
-                title=${pane_info[@]:4}
+                current_path=${pane_info[4]}
+                title=${pane_info[@]:5}
                 while read ps_line; do
                     p_info=($ps_line)
                     if [[ $tty == ${p_info[5]} ]]; then
                         printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  " \
                             $pane_id $session $pane ${p_info[@]::6}
                         cmd=${p_info[@]:6}
+                        cmd_arr=($cmd)
                         # vim path of current buffer if it setted the title
                         if [[ $cmd =~ ^n?vim && $title != $hostname ]]; then
-                            cmd_arr=($cmd)
                             cmd="${cmd_arr[0]} $title"
+                        fi
+                        # get shell current path
+                        if [[ $cmd =~ ^[^'/ ']*sh ]] && (( ${#cmd_arr[@]} == 1 )); then
+                            cmd="${cmd_arr[0]} ${current_path/#$HOME/'~'}"
                         fi
                         echo $cmd
                         break

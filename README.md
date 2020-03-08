@@ -23,6 +23,7 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 * Swap the current pane and the target pane
 * Kill the target pane
 * Display the path of the current buffer of vim dynamically in fzf field of cmd
+* Display the current path of shell in fzf field of cmd
 
 ## Installation
 
@@ -47,7 +48,7 @@ if-shell '[ -f ~/.local/bin/fzf_panes.tmux ]' {
 3. If you want to display the path of the current buffer of vim dynamically in fzf field of cmd, you should set the title configuration of vim like this:
 ```vim
 set title
-set titlestring=%(%m%)%(%{expand(\"%:~:.:h\")}%)\/%t
+set titlestring=%(%m%)%(%{expand(\"%:~\")}%)
 ```
 
 > The `ps` command only record startup command of vim, so I use title of vim to replace the argument of vim's cmd in `ps`.
