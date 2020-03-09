@@ -30,7 +30,7 @@ do_action() {
         '(( start>0 )) && echo $start || echo 0) -t {1}'
     preview_cmd=$*
     last_pane_cmd='$(tmux show -gqv "@mru_pane_ids" | cut -d\  -f1)'
-    selected=$(FZF_DEFAULT_COMMAND=$cmd fzf -m --preview="$preview_cmd" \
+    selected=$(FZF_DEFAULT_COMMAND=$cmd SHELL=$(which bash) fzf -m --preview="$preview_cmd" \
         --preview-window='down:80%' --reverse --info=inline --header-lines=1 \
         --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,9 \
         --bind="alt-p:toggle-preview" \
