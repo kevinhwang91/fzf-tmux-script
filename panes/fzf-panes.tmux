@@ -29,22 +29,21 @@ do_action() {
         '- $FZF_PREVIEW_LINES ));' \
         '(( start>0 )) && echo $start || echo 0) -t {1}'
     preview_cmd=$*
-    last_pane_cmd='$(tmux show -gqv "@mru_pane_ids" | cut -d\  -f1)'
-    selected=$(FZF_DEFAULT_COMMAND=$cmd SHELL=$(which bash) fzf -m --preview="$preview_cmd" \
+    selected=$(FZF_DEFAULT_COMMAND=$cmd SHELL=$(command -v bash) fzf -m --preview="$preview_cmd" \
         --preview-window='down:80%' --reverse --info=inline --header-lines=1 \
         --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,9 \
         --bind="alt-p:toggle-preview" \
         --bind="ctrl-r:reload($cmd)" \
         --bind="ctrl-x:execute-silent(tmux kill-pane -t {1})+reload($cmd)" \
-        --bind="ctrl-v:execute(tmux move-pane -h -t $last_pane_cmd -s {1})+accept" \
-        --bind="ctrl-s:execute(tmux move-pane -v -t $last_pane_cmd -s {1})+accept" \
-        --bind="ctrl-t:execute-silent(tmux swap-pane -t $last_pane_cmd -s {1})+reload($cmd)")
+        --bind="ctrl-v:execute(tmux move-pane -h -t ! -s {1})+accept" \
+        --bind="ctrl-s:execute(tmux move-pane -v -t ! -s {1})+accept" \
+        --bind="ctrl-t:execute-silent(tmux swap-pane -t ! -s {1})+reload($cmd)")
     (($?)) && return
 
     ids_o=($(tmux show -gqv '@mru_pane_ids'))
     ids=()
     for id in ${ids_o[@]}; do
-        while read pane_line; do
+        while read -r pane_line; do
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
             [[ $id == $pane_id ]] && ids+=($id)
