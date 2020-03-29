@@ -23,7 +23,7 @@ Using tmux popup window to interact with fzf.
 
 1. `git clone https://github.com/tmux/tmux && cd tmux`
 2. `sh autogen.sh && ./configure && make install`
-3. Restart tmux server `tmux kill-server && tmux start-server`
+3. Restart tmux server `tmux kill-server 2>/dev/null; tmux start-server`
 4. Install `fzf-tmux-popup` under your `$PATH`.
 
 ## Usage
