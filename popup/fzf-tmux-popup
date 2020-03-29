@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 fail() {
-    echo >&2 "$1"
+    echo "$1" >&2
     exit 2
 }
 
@@ -46,21 +46,16 @@ cmd_file="${TMPDIR:-/tmp}/fzf-cmd-file-$id"
 pstdin="${TMPDIR:-/tmp}/fzf-pstdin-$id"
 pstdout="${TMPDIR:-/tmp}/fzf-pstdout-$id"
 
-cleanup() {
-    \rm -f $cmd_file $pstdin $pstdout
+clean_cmd="\rm -f $cmd_file $pstdin $pstdout"
 
-    if (($#)); then
-        trap - EXIT
-        exit 130
-    fi
+cleanup() {
+    eval "$clean_cmd"
 }
-trap 'cleanup 1' SIGUSR1
 trap 'cleanup' EXIT
 
 mkfifo $pstdout
 
-pppid=$$
-echo -n "trap 'kill -SIGUSR1 -$pppid' SIGINT SIGTERM SIGHUP;" >$cmd_file
+echo -n "trap '$clean_cmd' EXIT SIGINT SIGTERM SIGHUP;" >$cmd_file
 
 if [[ -t 0 ]]; then
     cat <<<"$fzf $opts > $pstdout" >>$cmd_file
