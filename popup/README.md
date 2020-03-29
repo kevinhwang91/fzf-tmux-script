@@ -28,13 +28,13 @@ Using tmux popup window to interact with fzf.
 
 ## Usage
 
-All options of `fzf-tmux-popup` is the same with fzf's except `--weight` and `--height` which will tranfer to `tmux popup -w -h`.
+All options of `fzf-tmux-popup` is the same with fzf's except `--width` and `--height` which will tranfer to `tmux popup -w -h`.
 
 ### Example
 
-`ls --color=always | fzf-tmux-popup --ansi --weight=50% --height=50%`
+`ls --color=always | fzf-tmux-popup --ansi --width=50% --height=50%`
 
 ## Environment
 
 - `TMUX_POPUP_HEIGHT`: height of tmux popup window, default value is `80%`, disabled when `--height` is existed.
-- `TMUX_POPUP_WEIGHT`: weight of tmux popup window, it's similar to `TMUX_POPUP_HEIGHT`.
+- `TMUX_POPUP_WIDTH`: width of tmux popup window, it's similar to `TMUX_POPUP_HEIGHT`.

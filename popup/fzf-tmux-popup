@@ -16,11 +16,11 @@ opts=""
 while (($#)); do
     arg="$1"
     case "$arg" in
-    --height | --weight)
+    --height | --width)
         eval "${arg:2}=$2"
         shift
         ;;
-    --height=* | --weight=*)
+    --height=* | --width=*)
         eval "${arg:2}"
         ;;
     *)
@@ -35,7 +35,7 @@ while (($#)); do
 done
 
 [[ -z $height ]] && height=${TMUX_POPUP_HEIGHT:-80%}
-[[ -z $weight ]] && weight=${TMUX_POPUP_WEIGHT:-80%}
+[[ -z $width ]] && width=${TMUX_POPUP_WIDTH:-80%}
 
 envs="SHELL=$SHELL"
 [[ -n "$FZF_DEFAULT_OPTS" ]] && envs="$envs FZF_DEFAULT_OPTS=$(printf %q "$FZF_DEFAULT_OPTS")"
@@ -70,4 +70,4 @@ else
     cat <&0 >$pstdin &
 fi
 cat $pstdout &
-tmux popup -d '#{pane_current_path}' -xC -yC -w$weight -h$height -K -E -R "$envs bash $cmd_file"
+tmux popup -d '#{pane_current_path}' -xC -yC -w$width -h$height -K -E -R "$envs bash $cmd_file"
