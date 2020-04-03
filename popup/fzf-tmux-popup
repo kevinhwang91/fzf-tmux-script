@@ -10,7 +10,7 @@ awk -v version=$tmux_version 'BEGIN{exit(version<3.2)?1:0}' ||
     fail "tmux's version must be greater than 3.2"
 
 fzf=$(command -v fzf 2>/dev/null) || fzf=$(dirname $0)/fzf
-[[ -x $fzf ]] || fail 'fzf executable not found' 1>&2
+[[ -x "$fzf" ]] || fail 'fzf executable not found'
 
 opts='"--no-height"'
 while (($#)); do
@@ -53,16 +53,16 @@ cleanup() {
 }
 trap 'cleanup' EXIT
 
-mkfifo $pstdout
+mkfifo "$pstdout"
 
-echo -n "trap '$clean_cmd' EXIT SIGINT SIGTERM SIGHUP;" >$cmd_file
+echo -n "trap '$clean_cmd' EXIT SIGINT SIGTERM SIGHUP;" >"$cmd_file"
 
 if [[ -t 0 ]]; then
-    cat <<<"$fzf $opts > $pstdout" >>$cmd_file
+    cat <<<"$fzf $opts > $pstdout" >>"$cmd_file"
 else
-    mkfifo $pstdin
-    cat <<<"$fzf $opts < $pstdin > $pstdout" >>$cmd_file
+    mkfifo "$pstdin"
+    cat <<<"$fzf $opts < $pstdin > $pstdout" >>"$cmd_file"
     cat <&0 >$pstdin &
 fi
-cat $pstdout &
+cat "$pstdout" &
 tmux popup -d '#{pane_current_path}' -xC -yC -w$width -h$height -K -E -R "$envs bash $cmd_file"
