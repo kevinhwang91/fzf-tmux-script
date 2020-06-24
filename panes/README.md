@@ -61,6 +61,7 @@ Using `prefix+w` to call the script in new window of tmux.
 ### Keymap for fzf
 
 - `alt-p`: toggle the preview for detail of the pane
+- `alt-n`: craete new window
 - `ctrl-r`: reload the source of fzf
 - `ctrl-x`: kill the target pane
 - `ctrl-v`: join the current pane and the the target pane vertically

@@ -33,16 +33,17 @@ do_action() {
         --preview-window='down:80%' --reverse --info=inline --header-lines=1 \
         --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,9 \
         --bind="alt-p:toggle-preview" \
+        --bind="alt-n:execute(tmux new-window)+cancel" \
         --bind="ctrl-r:reload($cmd)" \
         --bind="ctrl-x:execute-silent(tmux kill-pane -t {1})+reload($cmd)" \
         --bind="ctrl-v:execute(tmux move-pane -h -t ! -s {1})+accept" \
         --bind="ctrl-s:execute(tmux move-pane -v -t ! -s {1})+accept" \
-        --bind="ctrl-t:execute-silent(tmux swap-pane -t ! -s {1})+reload($cmd)")
-    (($?)) && return
+        --bind="ctrl-t:execute-silent(tmux swap-pane -t ! -s {1})+reload($cmd)") \
+        || return
 
     ids_o=($(tmux show -gqv '@mru_pane_ids'))
     ids=()
-    for id in ${ids_o[@]}; do
+    for id in "${ids_o[@]}"; do
         while read -r pane_line; do
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
@@ -94,7 +95,7 @@ panes_src() {
     ids=()
     hostname=$(hostname)
     for id in $(tmux show -gqv '@mru_pane_ids'); do
-        while read pane_line; do
+        while read -r pane_line; do
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
             if [[ $id == $pane_id ]]; then
@@ -104,7 +105,7 @@ panes_src() {
                 tty=${pane_info[3]#/dev/}
                 current_path=${pane_info[4]}
                 title=${pane_info[@]:5}
-                while read ps_line; do
+                while read -r ps_line; do
                     p_info=($ps_line)
                     if [[ $tty == ${p_info[5]} ]]; then
                         printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  " \
@@ -129,4 +130,4 @@ panes_src() {
     tmux set -g '@mru_pane_ids' "${ids[*]}"
 }
 
-$@
+"$@"
