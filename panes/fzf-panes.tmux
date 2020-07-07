@@ -38,8 +38,8 @@ do_action() {
         --bind="ctrl-x:execute-silent(tmux kill-pane -t {1})+reload($cmd)" \
         --bind="ctrl-v:execute(tmux move-pane -h -t ! -s {1})+accept" \
         --bind="ctrl-s:execute(tmux move-pane -v -t ! -s {1})+accept" \
-        --bind="ctrl-t:execute-silent(tmux swap-pane -t ! -s {1})+reload($cmd)") \
-        || return
+        --bind="ctrl-t:execute-silent(tmux swap-pane -t ! -s {1})+reload($cmd)") ||
+        return
 
     ids_o=($(tmux show -gqv '@mru_pane_ids'))
     ids=()
@@ -94,6 +94,7 @@ panes_src() {
         awk '$1~/\+/ {$1="";print $0}')
     ids=()
     hostname=$(hostname)
+    first=''
     for id in $(tmux show -gqv '@mru_pane_ids'); do
         while read -r pane_line; do
             pane_info=($pane_line)
@@ -108,8 +109,6 @@ panes_src() {
                 while read -r ps_line; do
                     p_info=($ps_line)
                     if [[ $tty == ${p_info[5]} ]]; then
-                        printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  " \
-                            $pane_id $session $pane ${p_info[@]::6}
                         cmd=${p_info[@]:6}
                         cmd_arr=($cmd)
                         # vim path of current buffer if it setted the title
@@ -120,13 +119,22 @@ panes_src() {
                         if [[ $cmd =~ ^[^'/ ']*sh ]] && (( ${#cmd_arr[@]} == 1 )); then
                             cmd="${cmd_arr[0]} ${current_path/#$HOME/'~'}"
                         fi
-                        echo $cmd
+                        if [[ -z $first ]]; then
+                            first=$(printf "%-6s  %-7s%% %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                                $pane_id "$session" $pane ${p_info[@]::6} "$cmd")
+                        else
+                            printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                                $pane_id "$session" $pane ${p_info[@]::6} "$cmd"
+                        fi
                         break
                     fi
                 done <<<$ps_info
             fi
         done <<<$panes_info
     done
+    if [[ -n $first ]]; then
+        printf '%s' "$first"
+    fi
     tmux set -g '@mru_pane_ids' "${ids[*]}"
 }
 
