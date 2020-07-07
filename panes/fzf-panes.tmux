@@ -120,8 +120,8 @@ panes_src() {
                             cmd="${cmd_arr[0]} ${current_path/#$HOME/'~'}"
                         fi
                         if [[ -z $first ]]; then
-                            first=$(printf "%-6s  %-7s%% %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                                $pane_id "$session" $pane ${p_info[@]::6} "$cmd")
+                            first=$(printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                                $pane_id "${session:0:6}%" $pane ${p_info[@]::6} "$cmd")
                         else
                             printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
                                 $pane_id "$session" $pane ${p_info[@]::6} "$cmd"
