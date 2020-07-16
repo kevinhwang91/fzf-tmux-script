@@ -13,7 +13,7 @@ update_mru_pane_ids() {
     current_pane_id=$(tmux display-message -p '#D')
     n_data=($current_pane_id)
     for i in ${!o_data[@]}; do
-        [[ $current_pane_id != ${o_data[i]} ]] && n_data+=(${o_data[i]})
+        [[ $current_pane_id != "${o_data[i]}" ]] && n_data+=("${o_data[i]}")
     done
     tmux set -g '@mru_pane_ids' "${n_data[*]}"
 }
@@ -31,7 +31,7 @@ do_action() {
     preview_cmd=$*
     selected=$(FZF_DEFAULT_COMMAND=$cmd SHELL=$(command -v bash) fzf -m --preview="$preview_cmd" \
         --preview-window='down:80%' --reverse --info=inline --header-lines=1 \
-        --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,9 \
+        --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,8,9 \
         --bind="alt-p:toggle-preview" \
         --bind="alt-n:execute(tmux new-window)+cancel" \
         --bind="ctrl-r:reload($cmd)" \
@@ -47,7 +47,7 @@ do_action() {
         while read -r pane_line; do
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
-            [[ $id == $pane_id ]] && ids+=($id)
+            [[ $id == "$pane_id" ]] && ids+=($id)
         done <<<$selected
     done
 
@@ -83,6 +83,40 @@ do_action() {
     fi
 }
 
+_print_src_line() {
+    local ps_info="$2"
+    local pane_info=($1)
+    local pane_id=${pane_info[0]}
+    local session=${pane_info[1]}
+    local pane=${pane_info[2]}
+    local tty=${pane_info[3]#/dev/}
+    local current_path=${pane_info[4]}
+    local title=${pane_info[@]:5}
+    while read -r ps_line; do
+        local p_info=($ps_line)
+        if [[ $tty == ${p_info[5]} ]]; then
+            local cmd=${p_info[@]:6}
+            local cmd_arr=($cmd)
+            # vim path of current buffer if it setted the title
+            if [[ $cmd =~ ^n?vim && $title != "$hostname" ]]; then
+                cmd="${cmd_arr[0]} $title"
+            fi
+            # get shell current path
+            if [[ $cmd =~ ^[^'/ ']*sh ]] && (( ${#cmd_arr[@]} == 1 )); then
+                cmd="${cmd_arr[0]} ${current_path/#$HOME/'~'}"
+            fi
+            if [[ -z $first ]]; then
+                first=$(printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                    $pane_id "${session:0:6}%" $pane ${p_info[@]::6} "$cmd")
+            else
+                printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                    $pane_id "$session" $pane ${p_info[@]::6} "$cmd"
+            fi
+            break
+        fi
+    done <<<$ps_info
+}
+
 panes_src() {
     printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
         'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'THCNT' 'TIME' 'TTY' 'CMD'
@@ -99,39 +133,22 @@ panes_src() {
         while read -r pane_line; do
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
-            if [[ $id == $pane_id ]]; then
+            if [[ $id == "$pane_id" ]]; then
                 ids+=($id)
-                session=${pane_info[1]}
-                pane=${pane_info[2]}
-                tty=${pane_info[3]#/dev/}
-                current_path=${pane_info[4]}
-                title=${pane_info[@]:5}
-                while read -r ps_line; do
-                    p_info=($ps_line)
-                    if [[ $tty == ${p_info[5]} ]]; then
-                        cmd=${p_info[@]:6}
-                        cmd_arr=($cmd)
-                        # vim path of current buffer if it setted the title
-                        if [[ $cmd =~ ^n?vim && $title != $hostname ]]; then
-                            cmd="${cmd_arr[0]} $title"
-                        fi
-                        # get shell current path
-                        if [[ $cmd =~ ^[^'/ ']*sh ]] && (( ${#cmd_arr[@]} == 1 )); then
-                            cmd="${cmd_arr[0]} ${current_path/#$HOME/'~'}"
-                        fi
-                        if [[ -z $first ]]; then
-                            first=$(printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                                $pane_id "${session:0:6}%" $pane ${p_info[@]::6} "$cmd")
-                        else
-                            printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                                $pane_id "$session" $pane ${p_info[@]::6} "$cmd"
-                        fi
-                        break
-                    fi
-                done <<<$ps_info
+                _print_src_line "$pane_line" "$ps_info"
             fi
         done <<<$panes_info
     done
+
+    while read -r pane_line; do
+        pane_info=($pane_line)
+        pane_id=${pane_info[0]}
+        if [[ ${ids[*]} =~ $pane_id ]]; then
+            continue
+        fi
+        _print_src_line "$pane_line" "$ps_info"
+    done <<<$panes_info
+
     if [[ -n $first ]]; then
         printf '%s' "$first"
     fi
