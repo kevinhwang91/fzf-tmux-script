@@ -12,8 +12,8 @@ update_mru_pane_ids() {
     o_data=($(tmux show -gqv '@mru_pane_ids'))
     current_pane_id=$(tmux display-message -p '#D')
     n_data=($current_pane_id)
-    for i in ${!o_data[@]}; do
-        [[ $current_pane_id != "${o_data[i]}" ]] && n_data+=("${o_data[i]}")
+    for data in "${o_data[@]}"; do
+        [[ $current_pane_id != "$data" ]] && n_data+=("$data")
     done
     tmux set -g '@mru_pane_ids' "${n_data[*]}"
 }
@@ -53,15 +53,15 @@ do_action() {
 
     id_n=${#ids[@]}
     id1=${ids[0]}
-    if ((id_n == 1)); then
-        tmux switch-client -t$id1
-    elif ((id_n > 1)); then
+    if (( id_n == 1 )); then
+        tmux switch-client -Z -t$id1
+    elif (( id_n > 1 )); then
         tmux break-pane -s$id1
         i=1
         tmux_cmd="tmux "
-        while ((i < id_n)); do
+        while (( i < id_n )); do
             tmux_cmd+="move-pane -t${ids[i-1]} -s${ids[i]} \; select-layout -t$id1 'tiled' \; "
-            ((i++))
+            (( i++ ))
         done
 
         # my personally configuration
@@ -106,11 +106,11 @@ _print_src_line() {
                 cmd="${cmd_arr[0]} ${current_path/#$HOME/'~'}"
             fi
             if [[ -z $first ]]; then
-                first=$(printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "${session:0:6}%" $pane ${p_info[@]::6} "$cmd")
+                first=$(printf "%-6s  %-7s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                    $pane_id "${session:0:6}%" "${pane:0:-1}" "${pane: -1}" ${p_info[@]::6} "$cmd")
             else
-                printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "$session" $pane ${p_info[@]::6} "$cmd"
+                printf "%-6s  %-7s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+                    $pane_id "$session" "${pane:0:-1}" "${pane: -1}" ${p_info[@]::6} "$cmd"
             fi
             break
         fi
@@ -118,10 +118,10 @@ _print_src_line() {
 }
 
 panes_src() {
-    printf "%-6s  %-7s  %5s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
+    printf "%-6s  %-7s  %6s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
         'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'THCNT' 'TIME' 'TTY' 'CMD'
     panes_info=$(tmux list-panes -aF \
-        '#D #{=|6|…:session_name} #I.#P #{pane_tty} #{pane_current_path} #T' |
+        '#D #{=|6|…:session_name} #I.#P#{?window_zoomed_flag,⬢,❄} #{pane_tty} #{pane_current_path} #T' |
         sed -E "/^$TMUX_PANE /d")
     ttys=$(awk '{printf("%s,", $4)}' <<<$panes_info | sed 's/,$//')
     ps_info=$(ps -t$ttys -o stat,pid,pcpu,pmem,thcount,time,tname,cmd |
