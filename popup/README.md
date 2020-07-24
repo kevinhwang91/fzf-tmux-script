@@ -1,4 +1,4 @@
-# fzf-tmux-popup
+# fzfp
 
 Using tmux popup window to interact with fzf.
 
@@ -24,15 +24,15 @@ Using tmux popup window to interact with fzf.
 1. `git clone https://github.com/tmux/tmux && cd tmux`
 2. `sh autogen.sh && ./configure && make install`
 3. Restart tmux server `tmux kill-server 2>/dev/null; tmux start-server`
-4. Install `fzf-tmux-popup` under your `$PATH`.
+4. Install `fzfp` under your `$PATH`.
 
 ## Usage
 
-All options of `fzf-tmux-popup` is the same with fzf's except `--width` and `--height` which will tranfer to `tmux popup -w -h`.
+All options of `fzfp` is the same with fzf's except `--width` and `--height` which will tranfer to `tmux popup -w -h`.
 
 ### Example
 
-`ls --color=always | fzf-tmux-popup --ansi --width=50% --height=50%`
+`ls --color=always | fzfp --ansi --width=50% --height=50%`
 
 ## Environment
 
