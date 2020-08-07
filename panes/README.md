@@ -48,28 +48,34 @@ if-shell '[ -f ~/.local/bin/fzf-panes.tmux ]' {
 }
 ```
 
-3. If you want to display the path of the current buffer of vim dynamically in fzf field of cmd, you should set the title configuration of vim like this:
+<!-- markdownlint-disable MD029 -->
+3. If you want to display the path of the current buffer of vim dynamically in fzf field of cmd, you
+should set the title configuration of vim like this:
+<!-- markdownlint-enable MD013 -->
+
 ```vim
 set title
 set titlestring=%(%m%)%(%{expand(\"%:~\")}%)
 ```
 
-> The `ps` command only record startup command of vim, so I use title of vim to replace the argument of vim's cmd in `ps`.
+> The `ps` command only record startup command of vim, so I use title of vim to replace the argument
+> of vim's cmd in `ps`.
 
 ## Usage
 
-Using `prefix+w` to call the script in new window of tmux.
+1. Using `prefix+w` to call the script in new window of tmux.
+2. Using `prefix+;` to select last pane across windows and sessions
 
 ### Keymap for fzf
 
-- `alt-p`: toggle the preview for detail of the pane
-- `alt-n`: craete new window
-- `ctrl-r`: reload the source of fzf
-- `ctrl-x`: kill the target pane
-- `ctrl-v`: join the current pane and the the target pane vertically
-- `ctrl-s`: join the current pane and the the target pane horizontally
-- `ctrl-t`: swap the current pane and the target pane
+* `alt-p`: toggle the preview for detail of the pane
+* `alt-n`: craete new window
+* `ctrl-r`: reload the source of fzf
+* `ctrl-x`: kill the target pane
+* `ctrl-v`: join the current pane and the the target pane vertically
+* `ctrl-s`: join the current pane and the the target pane horizontally
+* `ctrl-t`: swap the current pane and the target pane
 
 ## Limitation
 
-- [Can't capture pane with zoomed status](https://github.com/tmux/tmux/issues/2092)
+* [Can't capture pane with zoomed status](https://github.com/tmux/tmux/issues/2092)
