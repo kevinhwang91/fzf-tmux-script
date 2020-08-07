@@ -155,4 +155,21 @@ panes_src() {
     tmux set -g '@mru_pane_ids' "${ids[*]}"
 }
 
+select_last_pane() {
+    mru_pane_ids=($(tmux show -gqv '@mru_pane_ids'))
+    current_pane_id=$(tmux display-message -p '#D')
+    if [[ ${mru_pane_ids[0]} != "$current_pane_id" ]]; then
+        return
+    fi
+    pane_ids=($(tmux list-panes -a -F '#D'))
+    for last_pane_id in "${mru_pane_ids[@]:1}"; do
+        for pane_id in "${pane_ids[@]}" ; do
+            if [[ $last_pane_id = "$pane_id" ]]; then
+                tmux switch-client -Z -t$last_pane_id
+                return
+            fi
+        done
+    done
+}
+
 "$@"

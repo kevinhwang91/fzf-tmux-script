@@ -25,6 +25,7 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 * Kill the target pane
 * Display the path of the current buffer of vim dynamically in fzf field of cmd
 * Display the current path of shell in fzf field of cmd
+* Select last pane across windows and sessions
 
 ## Installation
 
@@ -40,6 +41,7 @@ if-shell '[ -f ~/.local/bin/fzf-panes.tmux ]' {
     set-hook -g pane-focus-in[10] \
     "run -b 'bash ~/.local/bin/fzf-panes.tmux update_mru_pane_ids'"
     bind w run -b 'bash ~/.local/bin/fzf-panes.tmux new_window'
+    bind \; run -b 'bash ~/.local/bin/fzf-panes.tmux select_last_pane'
 } {
     set-hook -ug pane-focus-in[10]
     bind w choose-tree -Z
