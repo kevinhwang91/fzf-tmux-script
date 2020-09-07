@@ -35,7 +35,7 @@ do_action() {
     local preview_cmd=$*
     selected=$(FZF_DEFAULT_COMMAND=$cmd SHELL=$(command -v bash) fzf -m --preview="$preview_cmd" \
         --preview-window='down:80%' --reverse --info=inline --header-lines=1 \
-        --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,8,9 \
+        --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,8,9 --cycle \
         --bind="alt-p:toggle-preview" \
         --bind="alt-n:execute(tmux new-window)+cancel" \
         --bind="ctrl-r:reload($cmd)" \
