@@ -185,14 +185,15 @@ _match_in_args() {
 
 select_last_pane() {
     local m_ids=($(tmux show -gqv '@mru_pane_ids'))
-    if [[ ${m_ids[0]} != $(tmux display-message -p '#D') ]]; then
-        return
-    fi
-    local ids_str last_pane_id
+    local ids_str last_id cur_id
     ids_str=$(tmux list-panes -a -F '#D')
-    for last_pane_id in "${m_ids[@]:1}"; do
-        if _match_in_args $last_pane_id $ids_str; then
-            tmux switch-client -Z -t$last_pane_id
+    cur_id=$(tmux display-message -p '#D')
+    for last_id in "${m_ids[@]}"; do
+        if [[ $cur_id == "$last_id" ]]; then
+            continue
+        fi
+        if _match_in_args $last_id $ids_str; then
+            tmux switch-client -Z -t$last_id
             return
         fi
     done
