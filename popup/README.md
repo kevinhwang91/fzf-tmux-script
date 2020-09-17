@@ -16,8 +16,8 @@ Using tmux popup window to interact with fzf.
 
 ## Features
 
-* Compatible with raw fzf
-* Support the newest tmux popup feature
+- Compatible with raw fzf
+- Support the newest tmux popup feature
 
 ## Installation
 
@@ -37,6 +37,9 @@ All options of `fzfp` is the same with fzf's except `--width` and `--height` whi
 
 ## Environment
 
-* `TMUX_POPUP_HEIGHT`: height of tmux popup window, default value is `80%`, disabled when `--height`
-is existed.
-* `TMUX_POPUP_WIDTH`: width of tmux popup window, it's similar to `TMUX_POPUP_HEIGHT`.
+- `TMUX_POPUP_HEIGHT`: height of tmux popup window, default value is `80%`,
+  disabled when `--height`
+  is existed.
+- `TMUX_POPUP_WIDTH`: width of tmux popup window, it's similar to `TMUX_POPUP_HEIGHT`.
+- `TMUX_POPUP_NESTED_FB`: check whether current pane is nested in popup,
+  fallback to fzf if the return code of `eval "$TMUX_POPUP_NESTED_FB"` is true.
