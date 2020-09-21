@@ -125,8 +125,11 @@ _print_src_line() {
                 first=$(printf "%-6s  %-9s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
                     $pane_id "${session:0:8}%" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd")
             else
+                if (( ${#session} > 8 )); then
+                    session="${session:0:8}…"
+                fi
                 printf "%-6s  %-9s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "${session:0:8}…" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd"
+                    $pane_id "$session" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd"
             fi
             break
         fi
