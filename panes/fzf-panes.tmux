@@ -123,10 +123,10 @@ _print_src_line() {
             fi
             if [[ -z $first ]]; then
                 first=$(printf "%-6s  %-9s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "${session:0:6}%" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd")
+                    $pane_id "${session:0:8}%" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd")
             else
                 printf "%-6s  %-9s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "$session" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd"
+                    $pane_id "${session:0:8}…" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd"
             fi
             break
         fi
@@ -138,7 +138,7 @@ panes_src() {
     printf "%-6s  %-9s  %6s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
         'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'THCNT' 'TIME' 'TTY' 'CMD'
     panes_info=$(tmux list-panes -aF \
-        '#D #{s| |_|:#{=|9|…:session_name}} #I.#P#{?window_zoomed_flag,⬢,❄} #{pane_tty} #{pane_current_path} #T' |
+        '#D #{s| |_|:session_name} #I.#P#{?window_zoomed_flag,⬢,❄} #{pane_tty} #{pane_current_path} #T' |
         sed -E "/^$cur_id /d")
     ttys=$(awk '{printf("%s,", $4)}' <<<$panes_info | sed 's/,$//')
     ps_info=$(ps -t$ttys -o stat,pid,pcpu,pmem,thcount,time,tname,cmd |
