@@ -4,10 +4,6 @@ Using fzf to select the panes of tmux, like selecting buffer by using fzf in vim
 
 It's a alternative for `choose-tree` which is a native command of tmux.
 
-<p align="center">
-  <img width="1080px" src="https://user-images.githubusercontent.com/17562139/75963942-568e6500-5f01-11ea-8b9c-b14ca9f50dc1.gif">
-</p>
-
 ## Requirements
 
 1. bash
@@ -16,16 +12,16 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 
 ## Features
 
-* Select a single pane quickly
-* Show resources of every pane's process
-* Combine multiple panes into a window
-* Order by Most Recently Used (MRU) panes
-* Join the current pane and the target pane
-* Swap the current pane and the target pane
-* Kill the target pane
-* Display the path of the current buffer of vim dynamically in fzf field of cmd
-* Display the current path of shell in fzf field of cmd
-* Select last pane across windows and sessions
+- Select a single pane quickly
+- Show resources of every pane's process
+- Combine multiple panes into a window
+- Order by Most Recently Used (MRU) panes
+- Join the current pane and the target pane
+- Swap the current pane and the target pane
+- Kill the target pane
+- Display the path of the current buffer of vim dynamically in fzf field of cmd
+- Display the current path of shell in fzf field of cmd
+- Select last pane across windows and sessions
 
 ## Installation
 
@@ -49,6 +45,7 @@ if-shell '[ -f ~/.local/bin/fzf-panes.tmux ]' {
 ```
 
 <!-- markdownlint-disable MD029 -->
+
 3. If you want to display the path of the current buffer of vim dynamically in fzf field of cmd, you
 should set the title configuration of vim like this:
 <!-- markdownlint-enable MD013 -->
@@ -68,14 +65,14 @@ set titlestring=%(%m%)%(%{expand(\"%:~\")}%)
 
 ### Keymap for fzf
 
-* `alt-p`: toggle the preview for detail of the pane
-* `alt-n`: craete new window
-* `ctrl-r`: reload the source of fzf
-* `ctrl-x`: kill the target pane
-* `ctrl-v`: join the current pane and the the target pane vertically
-* `ctrl-s`: join the current pane and the the target pane horizontally
-* `ctrl-t`: swap the current pane and the target pane
+- `alt-p`: toggle the preview for detail of the pane
+- `alt-n`: craete new window
+- `ctrl-r`: reload the source of fzf
+- `ctrl-x`: kill the target pane
+- `ctrl-v`: join the current pane and the the target pane vertically
+- `ctrl-s`: join the current pane and the the target pane horizontally
+- `ctrl-t`: swap the current pane and the target pane
 
 ## Limitation
 
-* [Can't capture pane with zoomed status](https://github.com/tmux/tmux/issues/2092)
+- [Can't capture pane with zoomed status](https://github.com/tmux/tmux/issues/2092)

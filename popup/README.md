@@ -2,10 +2,6 @@
 
 Using tmux popup window to interact with fzf.
 
-<p align="center">
-  <img width="960px" src="https://user-images.githubusercontent.com/17562139/77829950-406e7000-7160-11ea-85aa-0f966feeb237.gif">
-</p>
-
 ## Requirements
 
 1. bash
@@ -31,11 +27,7 @@ Using tmux popup window to interact with fzf.
 All options of `fzfp` is the same with fzf's except `--width` and `--height` which will tranfer to
 `tmux popup -w -h`.
 
-### Example
-
-`ls --color=always | fzfp --ansi --width=50% --height=50%`
-
-## Environment
+## Variables
 
 - `TMUX_POPUP_HEIGHT`: height of tmux popup window, default value is `80%`,
   disabled when `--height`
@@ -43,3 +35,21 @@ All options of `fzfp` is the same with fzf's except `--width` and `--height` whi
 - `TMUX_POPUP_WIDTH`: width of tmux popup window, it's similar to `TMUX_POPUP_HEIGHT`.
 - `TMUX_POPUP_NESTED_FB`: check whether current pane is nested in popup,
   fallback to fzf if the return code of `eval "$TMUX_POPUP_NESTED_FB"` is true.
+
+### Example
+
+- Use `ls` as the source for fzfp:
+
+`ls --color=always | fzfp --ansi --width=50% --height=50%`
+
+- Override fzf to fzfp in zsh:
+
+```zsh
+if [[ -n $TMUX_PANE ]] && (( $+commands[tmux] )) && (( $+commands[fzfp] )); then
+    # fallback to normal fzf if current session name is `floating`
+    export TMUX_POPUP_NESTED_FB='test $(tmux display -pF "#{==:#S,floating}") == 1'
+
+    export TMUX_POPUP_WIDTH=80%
+    commands[fzf]=$commands[fzfp]
+fi
+```
