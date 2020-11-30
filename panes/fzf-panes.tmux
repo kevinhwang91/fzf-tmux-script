@@ -149,12 +149,17 @@ panes_src() {
     ids=()
     hostname=$(hostname)
     first=''
+    local ex_session=$(tmux show -gqv '@fzf_panes_ex_session_pat')
     for m_id in $(tmux show -gqv '@mru_pane_ids'); do
         while read -r pane_line; do
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
+            session=${pane_info[1]}
             if [[ $m_id == "$pane_id" ]]; then
                 ids+=($m_id)
+                if [[ $session =~ $ex_session ]]; then
+                    continue
+                fi
                 _print_src_line "$pane_line" "$ps_info"
             fi
         done <<<$panes_info
@@ -163,7 +168,11 @@ panes_src() {
     while read -r pane_line; do
         pane_info=($pane_line)
         pane_id=${pane_info[0]}
+        session=${pane_info[1]}
         if _match_in_args $pane_id "${ids[@]}"; then
+            continue
+        fi
+        if [[ $session =~ $ex_session ]]; then
             continue
         fi
         _print_src_line "$pane_line" "$ps_info"

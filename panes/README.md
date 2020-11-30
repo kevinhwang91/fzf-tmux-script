@@ -34,6 +34,9 @@ set -s focus-events on
 
 # replace ~/.local/bin/fzf-panes.tmux to your path of fzf-panes.tmux
 if-shell '[ -f ~/.local/bin/fzf-panes.tmux ]' {
+#   if you want to exclude specified session, please set @fzf_panes_ex_session_pat
+#   for example, value equal to '^(floating)$', will exclude panes in session named 'floating'
+#    set -g '@fzf_panes_ex_session_pat' '^(floating)$'
     set-hook -g pane-focus-in[10] \
     "run -b 'bash ~/.local/bin/fzf-panes.tmux update_mru_pane_ids'"
     bind w run -b 'bash ~/.local/bin/fzf-panes.tmux new_window'
