@@ -157,7 +157,7 @@ panes_src() {
             session=${pane_info[1]}
             if [[ $m_id == "$pane_id" ]]; then
                 ids+=($m_id)
-                if [[ $session =~ $ex_session ]]; then
+                if [[ -n $ex_session && $session =~ $ex_session ]]; then
                     continue
                 fi
                 _print_src_line "$pane_line" "$ps_info"
@@ -172,7 +172,7 @@ panes_src() {
         if _match_in_args $pane_id "${ids[@]}"; then
             continue
         fi
-        if [[ $session =~ $ex_session ]]; then
+        if [[ -n $ex_session && $session =~ $ex_session ]]; then
             continue
         fi
         _print_src_line "$pane_line" "$ps_info"
