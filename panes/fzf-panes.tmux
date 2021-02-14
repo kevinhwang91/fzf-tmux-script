@@ -53,7 +53,7 @@ do_action() {
             pane_info=($pane_line)
             pane_id=${pane_info[0]}
             [[ $m_id == "$pane_id" ]] && ids+=($m_id)
-        done <<<$selected
+        done <<<"$selected"
     done
 
     while read -r pane_line; do
@@ -63,7 +63,7 @@ do_action() {
             continue
         fi
         ids+=($pane_id)
-    done <<<$selected
+    done <<<"$selected"
 
     local id_cnt=${#ids[@]}
     local id0=${ids[0]}
@@ -99,19 +99,20 @@ do_action() {
 }
 
 _print_src_line() {
+    local fmt='%-6s  %-9s  %5s%s  %8s  %4s  %4s  %4s  %-8s  %-7s  %s\n'
     local ps_info="$2"
     local pane_info=($1)
     local pane_id=${pane_info[0]}
     local session=${pane_info[1]}
     local pane=${pane_info[2]}
-    local tty=${pane_info[3]#/dev/}
-    local cur_path=${pane_info[4]}
-    local title=${pane_info[@]:5}
-    local ps_line
-    while read -r ps_line; do
-        local pane_info=($ps_line)
-        if [[ $tty == ${pane_info[5]} ]]; then
-            local cmd=${pane_info[@]:6}
+    local pane_zoom=${pane_info[3]}
+    local tty=${pane_info[4]#/dev/}
+    local cur_path=${pane_info[5]}
+    local title=${pane_info[@]:6}
+    while read -r line; do
+        local ps_line=($line)
+        if [[ $tty == ${ps_line[5]} ]]; then
+            local cmd=${ps_line[@]:6}
             local cmd_arr=($cmd)
             # vim path of current buffer if it setted the title
             if [[ $cmd =~ ^n?vim && $title != $(hostname) ]]; then
@@ -119,37 +120,39 @@ _print_src_line() {
             fi
             # get shell current path
             if [[ $cmd =~ ^[^'/ ']*sh ]] && (( ${#cmd_arr[@]} == 1 )); then
-                cmd="${cmd_arr[0]} ${cur_path/#$HOME/'~'}"
+                cmd="${cmd_arr[0]} ${cur_path/#$HOME/~}"
             fi
             if [[ -z $first ]]; then
-                first=$(printf "%-6s  %-9s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "${session:0:8}%" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd")
+                first=$(printf "$fmt" $pane_id "${session:0:8}%" $pane $pane_zoom "${ps_line[@]::6}" "$cmd")
             else
                 if (( ${#session} > 8 )); then
                     session="${session:0:8}…"
                 fi
-                printf "%-6s  %-9s  %5s%s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-                    $pane_id "$session" "${pane:0:-1}" "${pane: -1}" ${pane_info[@]::6} "$cmd"
+                printf "$fmt" $pane_id $session $pane $pane_zoom "${ps_line[@]::6}" "$cmd"
             fi
             break
         fi
-    done <<<$ps_info
+    done <<<"$ps_info"
 }
 
 panes_src() {
+    typeset -g first=''
+    local panes_info,ttys,ps_info,ids,ex_session
+    local nlwp='nlwp'
+    if [[ $(uname -s) == 'Darwin' ]]; then
+        nlwp='wq'
+    fi
     local cur_id="$1"
-    printf "%-6s  %-9s  %6s  %8s  %4s  %4s  %5s  %-8s  %-7s  %s\n" \
-        'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'THCNT' 'TIME' 'TTY' 'CMD'
+    printf "%-6s  %-9s  %6s  %8s  %4s  %4s  %4s  %-8s  %-7s  %s\n" \
+        'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'NLWP' 'TIME' 'TTY' 'CMD'
     panes_info=$(tmux list-panes -aF \
-        '#D #{s| |_|:session_name} #I.#P#{?window_zoomed_flag,⬢,❄} #{pane_tty} #{pane_current_path} #T' |
+        '#D #{s| |_|:session_name} #I.#P #{?window_zoomed_flag,⬢,❄} #{pane_tty} #{pane_current_path} #T' |
         sed -E "/^$cur_id /d")
-    ttys=$(awk '{printf("%s,", $4)}' <<<$panes_info | sed 's/,$//')
-    ps_info=$(ps -t$ttys -o stat,pid,pcpu,pmem,thcount,time,tname,cmd |
+    ttys=$(awk '{printf("%s,", $5)}' <<<"$panes_info" | sed 's/,$//')
+    ps_info=$(ps -t$ttys -o stat,pid,pcpu,pmem,$nlwp,time,tty,command |
         awk '$1~/\+/ {$1="";print $0}')
     ids=()
-    hostname=$(hostname)
-    first=''
-    local ex_session=$(tmux show -gqv '@fzf_panes_ex_session_pat')
+    ex_session=$(tmux show -gqv '@fzf_panes_ex_session_pat')
     for m_id in $(tmux show -gqv '@mru_pane_ids'); do
         while read -r pane_line; do
             pane_info=($pane_line)
@@ -162,7 +165,7 @@ panes_src() {
                 fi
                 _print_src_line "$pane_line" "$ps_info"
             fi
-        done <<<$panes_info
+        done <<<"$panes_info"
     done
 
     while read -r pane_line; do
@@ -176,7 +179,7 @@ panes_src() {
             continue
         fi
         _print_src_line "$pane_line" "$ps_info"
-    done <<<$panes_info
+    done <<<"$panes_info"
 
     if [[ -n $first ]]; then
         printf '%s' "$first"
