@@ -4,6 +4,16 @@ Using fzf to select the panes of tmux, like selecting buffer by using fzf in vim
 
 It's a alternative for `choose-tree` which is a native command of tmux.
 
+## Table of contents
+
+* [Table of contents](#table-of-contents)
+* [Requirements](#requirements)
+* [Features](#features)
+* [Installation](#installation)
+* [Usage](#usage)
+  * [Keymap for fzf](#keymap-for-fzf)
+* [Limitation](#limitation)
+
 ## Requirements
 
 1. bash
@@ -12,7 +22,6 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 
 ## Features
 
-- Select a single pane quickly
 - Show resources of every pane's process
 - Combine multiple panes into a window
 - Order by Most Recently Used (MRU) panes
@@ -32,11 +41,11 @@ It's a alternative for `choose-tree` which is a native command of tmux.
 
 set -s focus-events on
 
-# replace ~/.local/bin/fzf-panes.tmux to your path of fzf-panes.tmux
+# replace ~/.local/bin/fzf-panes.tmux with fzf-panes.tmux under your PATH
 if-shell '[ -f ~/.local/bin/fzf-panes.tmux ]' {
 #   if you want to exclude specified session, please set @fzf_panes_ex_session_pat
-#   for example, value equal to '^(floating)$', will exclude panes in session named 'floating'
-#    set -g '@fzf_panes_ex_session_pat' '^(floating)$'
+#   for example, value equal to '^(floating)$', will exclude panes in session named 'floating':
+#   set -g '@fzf_panes_ex_session_pat' '^(floating)$'
     set-hook -g pane-focus-in[10] \
     "run -b 'bash ~/.local/bin/fzf-panes.tmux update_mru_pane_ids'"
     bind w run -b 'bash ~/.local/bin/fzf-panes.tmux new_window'
@@ -49,8 +58,8 @@ if-shell '[ -f ~/.local/bin/fzf-panes.tmux ]' {
 
 <!-- markdownlint-disable MD029 -->
 
-3. If you want to display the path of the current buffer of vim dynamically in fzf field of cmd, you
-should set the title configuration of vim like this:
+3. If you want to display the path of the current buffer of vim dynamically in fzf's cmd field, you
+should set the vim option `titlestring` like this:
 <!-- markdownlint-enable MD013 -->
 
 ```vim
@@ -69,7 +78,7 @@ set titlestring=%(%m%)%(%{expand(\"%:~\")}%)
 ### Keymap for fzf
 
 - `alt-p`: toggle the preview for detail of the pane
-- `alt-n`: craete new window
+- `alt-n`: create new window
 - `ctrl-r`: reload the source of fzf
 - `ctrl-x`: kill the target pane
 - `ctrl-v`: join the current pane and the the target pane vertically

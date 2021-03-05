@@ -2,6 +2,16 @@
 
 These are my fzf-tmux scripts, just for fun!
 
+## Table of contents
+
+* [Table of contents](#table-of-contents)
+* [Requirements](#requirements)
+* [Demonstration](#demonstration)
+  * [[panes](./panes)](#[panes](./panes))
+  * [[popup](./popup)](#[popup](./popup))
+* [Customization](#customization)
+* [License](#license)
+
 ## Requirements
 
 1. [fzf](https://github.com/junegunn/fzf)

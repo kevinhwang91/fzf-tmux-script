@@ -2,6 +2,16 @@
 
 Using tmux popup window to interact with fzf.
 
+## Table of contents
+
+* [Table of contents](#table-of-contents)
+* [Requirements](#requirements)
+* [Features](#features)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Variables](#variables)
+  * [Example](#example)
+
 ## Requirements
 
 1. bash
@@ -42,7 +52,7 @@ All options of `fzfp` is the same with fzf's except `--width` and `--height` whi
 
 `ls --color=always | fzfp --ansi --width=50% --height=50%`
 
-- Override fzf to fzfp in zsh:
+- Setup fzfp in zsh:
 
 ```zsh
 if [[ -n $TMUX_PANE ]] && (( $+commands[tmux] )) && (( $+commands[fzfp] )); then
@@ -50,6 +60,5 @@ if [[ -n $TMUX_PANE ]] && (( $+commands[tmux] )) && (( $+commands[fzfp] )); then
     export TMUX_POPUP_NESTED_FB='test $(tmux display -pF "#{==:#S,floating}") == 1'
 
     export TMUX_POPUP_WIDTH=80%
-    commands[fzf]=$commands[fzfp]
 fi
 ```
