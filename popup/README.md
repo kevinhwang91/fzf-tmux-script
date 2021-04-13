@@ -16,9 +16,7 @@ Using tmux popup window to interact with fzf.
 
 1. bash
 2. [fzf](https://github.com/junegunn/fzf)
-3. [tmux](https://github.com/tmux/tmux) (**latest version**)
-
-> popup feature hasn't released in a stable tmux version.
+3. [tmux](https://github.com/tmux/tmux) (**3.2 or later**)
 
 ## Features
 
