@@ -114,11 +114,11 @@ _print_src_line() {
     local pane_zoom=${pane_info[3]}
     local tty=${pane_info[4]#/dev/}
     local cur_path=${pane_info[5]}
-    local title=${pane_info[@]:6}
+    local title=${pane_info[*]:6}
     while read -r line; do
         local ps_line=($line)
-        if [[ $tty == ${ps_line[5]} ]]; then
-            local cmd=${ps_line[@]:6}
+        if [[ $tty == "${ps_line[5]}" ]]; then
+            local cmd=${ps_line[*]:6}
             local cmd_arr=($cmd)
             # vim path of current buffer if it setted the title
             if [[ $cmd =~ ^n?vim && $title != $(hostname) ]]; then
@@ -206,16 +206,24 @@ _match_in_args() {
 
 select_last_pane() {
     local m_ids=($(tmux show -gqv '@mru_pane_ids'))
-    local ids_str last_id cur_id
-    ids_str=$(tmux list-panes -a -F '#D')
-    cur_id=$(tmux display-message -p '#D')
+    local ids_str
+    local cur_info=($(tmux display-message -p '#D #S'))
+    local cur_id=${cur_info[0]}
+    local cur_session=${cur_info[*]:1}
+    local last_id last_info
     for last_id in "${m_ids[@]}"; do
         if [[ $cur_id == "$last_id" ]]; then
             continue
         fi
-        if _match_in_args $last_id $ids_str; then
-            tmux switch-client -Z -t$last_id
-            return
+        if _match_in_args $last_id $(tmux list-panes -a -F '#D'); then
+            last_info=($(tmux display -t $last_id -p '#{session_attached} #S'))
+            local last_session_attached=${last_info[0]}
+            local last_session=${last_info[*]:1}
+            # echo $last_session_attached $last_session $cur_session
+            if (( ! last_session_attached )) || [[ $cur_session == "$last_session" ]]; then
+                tmux switch-client -Z -t$last_id
+                return
+            fi
         fi
     done
 }
