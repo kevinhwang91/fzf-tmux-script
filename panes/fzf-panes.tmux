@@ -43,7 +43,7 @@ do_action() {
         --preview-window=$preview_win --height=100% --reverse --info=inline --header-lines=1 \
         --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,8,9 --cycle --exact \
         --bind="alt-p:toggle-preview" \
-        --bind="alt-n:execute(tmux new-window)+cancel" \
+        --bind="alt-n:execute(tmux new-window)+abort" \
         --bind="ctrl-r:reload($cmd)" \
         --bind="ctrl-x:execute-silent(tmux kill-pane -t {1})+reload($cmd)" \
         --bind="ctrl-v:execute(tmux move-pane -h -t ! -s {1})+accept" \
