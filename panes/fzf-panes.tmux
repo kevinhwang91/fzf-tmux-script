@@ -41,7 +41,7 @@ do_action() {
     fi
     selected=$(FZF_DEFAULT_COMMAND=$cmd SHELL=$(command -v bash) fzf -m --preview="$preview_cmd" \
         --preview-window=$preview_win --height=100% --reverse --info=inline --header-lines=1 \
-        --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,8,9 --cycle --exact \
+        --ansi --delimiter='\s{2,}' --with-nth=2..-1 --nth=1,2,8,9 --cycle --exact \
         --bind="alt-p:toggle-preview" \
         --bind="alt-n:execute(tmux new-window)+abort" \
         --bind="ctrl-r:reload($cmd)" \
@@ -105,7 +105,7 @@ do_action() {
 }
 
 _print_src_line() {
-    local fmt='%-6s  %-9s  %5s%s  %8s  %4s  %4s  %4s  %-8s  %-7s  %s\n'
+    local fmt='%-6s  %-9s  %b%5s%b%s  %8s  %4s  %4s  %4s  %-8s  %-7s  %s\n'
     local ps_info="$2"
     local pane_info=($1)
     local pane_id=${pane_info[0]}
@@ -115,6 +115,8 @@ _print_src_line() {
     local tty=${pane_info[4]#/dev/}
     local cur_path=${pane_info[5]}
     local title=${pane_info[*]:6}
+    # must in [1-16]
+    local ansi_base=${pane%%.[0-9]*}
     while read -r line; do
         local ps_line=($line)
         if [[ $tty == "${ps_line[5]}" ]]; then
@@ -129,12 +131,12 @@ _print_src_line() {
                 cmd="${cmd_arr[0]} ${cur_path/#$HOME/~}"
             fi
             if [[ -z $first ]]; then
-                first=$(printf "$fmt" $pane_id "${session:0:8}%" $pane $pane_zoom "${ps_line[@]::6}" "$cmd")
+                first=$(printf "$fmt" $pane_id "${session:0:8}%" "\x1b[38;5;${ansi_base}m" $pane "\x1b[0m" $pane_zoom "${ps_line[@]::6}" "$cmd")
             else
                 if (( ${#session} > 8 )); then
                     session="${session:0:8}…"
                 fi
-                printf "$fmt" $pane_id $session $pane $pane_zoom "${ps_line[@]::6}" "$cmd"
+                printf "$fmt" $pane_id $session "\x1b[38;5;${ansi_base}m" $pane "\x1b[0m" $pane_zoom "${ps_line[@]::6}" "$cmd"
             fi
             break
         fi
@@ -206,7 +208,6 @@ _match_in_args() {
 
 select_last_pane() {
     local m_ids=($(tmux show -gqv '@mru_pane_ids'))
-    local ids_str
     local cur_info=($(tmux display-message -p '#D #S'))
     local cur_id=${cur_info[0]}
     local cur_session=${cur_info[*]:1}
