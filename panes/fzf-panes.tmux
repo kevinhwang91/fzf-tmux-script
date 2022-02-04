@@ -153,7 +153,7 @@ panes_src() {
     local cur_id="$1"
     printf "%-6s  %-9s  %6s  %8s  %4s  %4s  %4s  %-8s  %-7s  %s\n" \
         'PANEID' 'SESSION' 'PANE' 'PID' '%CPU' '%MEM' 'NLWP' 'TIME' 'TTY' 'CMD'
-    panes_info=$(tmux list-panes -aF \
+    panes_info=$(tmux list-panes -af '#{!=:#{pane_dead},1}' -F \
         '#D #{s| |_|:session_name} #I.#P #{?window_zoomed_flag,⬢,❄} #{pane_tty} #{pane_current_path} #T' |
         sed -E "/^$cur_id /d")
     ttys=$(awk '{printf("%s,", $5)}' <<<"$panes_info" | sed 's/,$//')
