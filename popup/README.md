@@ -25,14 +25,12 @@ Using tmux popup window to interact with fzf.
 
 ## Installation
 
-1. `git clone https://github.com/tmux/tmux && cd tmux`
-2. `sh autogen.sh && ./configure && make install`
-3. Restart tmux server `tmux kill-server 2>/dev/null; tmux start-server`
-4. Install `fzfp` under your `$PATH`.
+1. Make sure tmux's version is 3.2 or later.
+2. Install `fzfp` under your `$PATH`.
 
 ## Usage
 
-All options of `fzfp` is the same with fzf's except `--width` and `--height` which will tranfer to
+All options of `fzfp` is the same with fzf's except `--width` and `--height` which will transfer to
 `tmux popup -w -h`.
 
 ## Variables

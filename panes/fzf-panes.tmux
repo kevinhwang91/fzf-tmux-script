@@ -122,7 +122,7 @@ _print_src_line() {
         if [[ $tty == "${ps_line[5]}" ]]; then
             local cmd=${ps_line[*]:6}
             local cmd_arr=($cmd)
-            # vim path of current buffer if it setted the title
+            # vim path of current buffer if it set the title
             if [[ $cmd =~ ^n?vim && $title != $(hostname) ]]; then
                 cmd="${cmd_arr[0]} $title"
             fi
